@@ -42,10 +42,12 @@
 ```
 
 - После реализации запустите postman тесты - они все должны быть зеленые.
+![Proxy-tests.png](Proxy-tests.png)
 - Отправьте запросы к API Gateway:
    ```bash
    curl http://localhost:8000/api/movies
    ```
+![Proxy-API_Gateway.png](Proxy-API_Gateway.png)
 - Протестируйте постепенный переход, изменив переменную окружения MOVIES_MIGRATION_PERCENT в файле docker-compose.yml.
 
 ### 2. Kafka
@@ -59,7 +61,7 @@
 
 Необходимые тесты для проверки этого API вызываются при запуске npm run test:local из папки tests/postman 
 Приложите скриншот тестов и скриншот состояния топиков Kafka http://localhost:8090 
-
+![Proxy-topics.png](Proxy-topics.png)
 
 ## Задание 3
 
