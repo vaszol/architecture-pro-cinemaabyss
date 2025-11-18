@@ -1,0 +1,97 @@
+@startuml
+title CinemaAbyss(«Кинобездна»") Container Diagram
+
+top to bottom direction
+!pragma charset UTF-8
+!pragma layout smetana
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+Person(user, "Пользователь", "Пользователь системы «Кинобездна»")
+System(CinemaAbyss, "CinemaAbyss сервис", "Система «Кинобездна»")
+
+
+Container(mobile_app, "Мобильное приложение", "React Native", "Клиент для смартфонов")
+Container(web_app, "Веб-приложение", "React SPA", "Клиент для браузеров")
+Container(smart_tv_app, "Smart TV приложение", "Custom TV OS", "Клиент для телевизоров")
+
+Container_Boundary(CinemaAbyss, "Платформа Кинобездна") {
+    Container(api_gateway, "API Gateway", "Go", "Маршрутизация запросов")
+
+    Container(user_service, "Сервис пользователей", "Go", "Регистрация и аутентификация")
+    Container(movies_service, "Сервис фильмов", "Go", "Метаданные и поиск фильмов")
+    Container(payment_service, "Сервис платежей", "Go", "Обработка платежей")
+    Container(subscription_service, "Сервис подписок", "Go", "Управление подписками")
+    Container(events_service, "Сервис событий", "Go", "Обработка событий")
+    Container(monolith, "Монолит", "Go", "Унаследованное приложение")
+
+    ContainerDb(postgres, "PostgreSQL", "PostgreSQL 14", "База данных")
+    Container(kafka, "Apache Kafka", "Kafka 2.7", "Очереди сообщений")
+    Container(prometheus, "Prometheus", "Мониторинг", "Сбор метрик")
+}
+
+System_Boundary(infrastructure, "Инфраструктура и DevOps") {
+    Container(k8s_cluster, "Kubernetes", "K8s", "Оркестрация контейнеров")
+    Container(helm, "Helm", "Helm", "Менеджер пакетов")
+    Container(ci_cd, "CI/CD", "GitHub Actions", "Автоматизация развертывания")
+    Container(docker_registry, "Docker Registry", "GitHub Registry", "Хранилище образов")
+}
+
+System_Ext(payment_systems, "Платежные системы", "Внешние платежные процессоры")
+System_Ext(recommendation_system, "Рекомендательная система", "ML-рекомендации")
+System_Ext(content_providers, "Поставщики контента", "Внешние стриминговые сервисы")
+System_Ext(rabbitmq, "RabbitMQ", "Система очередей сообщений")
+System_Ext(s3_storage, "S3 Хранилище", "Объектное хранилище файлов")
+
+Rel(user, mobile_app, "Выполняет запросы", "HTTP/API", "Взаимодействие пользователей")
+Rel(user, web_app, "Выполняет запросы", "HTTP/API", "Взаимодействие пользователей")
+Rel(user, smart_tv_app, "Выполняет запросы", "HTTP/API", "Взаимодействие пользователей")
+Rel(mobile_app, api_gateway, "API вызовы", "REST", "API Gateway")
+Rel(web_app, api_gateway, "API вызовы", "REST", "API Gateway")
+Rel(smart_tv_app, api_gateway, "API вызовы", "REST", "API Gateway")
+
+Rel(k8s_cluster, user_service, "Оркестрация", "K8s")
+Rel(k8s_cluster, movies_service, "Оркестрация", "K8s")
+Rel(k8s_cluster, payment_service, "Оркестрация", "K8s")
+Rel(k8s_cluster, subscription_service, "Оркестрация", "K8s")
+Rel(k8s_cluster, events_service, "Оркестрация", "K8s")
+Rel(k8s_cluster, api_gateway, "Оркестрация", "K8s")
+Rel(k8s_cluster, postgres, "Оркестрация", "K8s")
+Rel(k8s_cluster, kafka, "Оркестрация", "K8s")
+Rel(k8s_cluster, prometheus, "Оркестрация", "K8s")
+Rel(helm, k8s_cluster, "Развертывание", "K8s")
+Rel(ci_cd, docker_registry, "Загрузка образов", "Docker")
+Rel(k8s_cluster, docker_registry, "Скачивание образов", "Docker")
+
+Rel(api_gateway, user_service, "Запросы пользователей", "REST", "Маршрутизация")
+Rel(api_gateway, movies_service, "Запросы фильмов", "REST", "Маршрутизация")
+Rel(api_gateway, payment_service, "Запросы платежей", "REST", "Маршрутизация")
+Rel(api_gateway, subscription_service, "Запросы подписок", "REST", "Маршрутизация")
+Rel(api_gateway, monolith, "Запросы монолита", "REST", "Маршрутизация")
+
+Rel(user_service, postgres, "Данные пользователей", "SQL")
+Rel(user_service, kafka, "События пользователей", "Kafka")
+Rel(movies_service, postgres, "Данные фильмов", "SQL")
+Rel(movies_service, recommendation_system, "Рекомендации", "API")
+Rel(movies_service, content_providers, "Метаданные", "API")
+Rel(movies_service, kafka, "События фильмов", "Kafka")
+Rel(movies_service, s3_storage, "Медиафайлы", "S3 API")
+Rel(payment_service, postgres, "Данные платежей", "SQL")
+Rel(payment_service, kafka, "События платежей", "Kafka")
+Rel(payment_service, payment_systems, "Обработка платежей", "API")
+Rel(subscription_service, postgres, "Данные подписок", "SQL")
+Rel(subscription_service, kafka, "События подписок", "Kafka")
+Rel(monolith, postgres, "Данные монолита", "SQL")
+Rel(events_service, kafka, "Обработка событий", "Kafka")
+Rel(events_service, rabbitmq, "Сообщения", "AMQP")
+
+Rel(prometheus, user_service, "Метрики", "HTTP")
+Rel(prometheus, movies_service, "Метрики", "HTTP")
+Rel(prometheus, payment_service, "Метрики", "HTTP")
+Rel(prometheus, subscription_service, "Метрики", "HTTP")
+Rel(prometheus, events_service, "Метрики", "HTTP")
+Rel(prometheus, monolith, "Метрики", "HTTP")
+Rel(prometheus, kafka, "Метрики", "HTTP")
+Rel(prometheus, postgres, "Метрики", "HTTP")
+
+
+@enduml
