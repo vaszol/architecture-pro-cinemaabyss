@@ -5,8 +5,9 @@
 1. Спроектируйте to be архитектуру КиноБездны, разделив всю систему на отдельные домены и организовав интеграционное взаимодействие и единую точку вызова сервисов.
 Результат представьте в виде контейнерной диаграммы в нотации С4.
 Добавьте ссылку на файл в этот шаблон
-[ссылка на файл](ссылка)
 
+[Диаграмма контейнера](Container_Diagram.puml)
+![Диаграмма контейнера](Container_Diagram.png)
 
 ## Задание 2
 
@@ -41,10 +42,12 @@
 ```
 
 - После реализации запустите postman тесты - они все должны быть зеленые.
+![Proxy-tests.png](Proxy-tests.png)
 - Отправьте запросы к API Gateway:
    ```bash
    curl http://localhost:8000/api/movies
    ```
+![Proxy-API_Gateway.png](Proxy-API_Gateway.png)
 - Протестируйте постепенный переход, изменив переменную окружения MOVIES_MIGRATION_PERCENT в файле docker-compose.yml.
 
 ### 2. Kafka
@@ -58,7 +61,7 @@
 
 Необходимые тесты для проверки этого API вызываются при запуске npm run test:local из папки tests/postman 
 Приложите скриншот тестов и скриншот состояния топиков Kafka http://localhost:8090 
-
+![Proxy-topics.png](Proxy-topics.png)
 
 ## Задание 3
 
@@ -273,6 +276,9 @@ cat .docker/config.json | base64
 
 #### Шаг 3
 Добавьте сюда скриншота вывода при вызове https://cinemaabyss.example.com/api/movies и  скриншот вывода event-service после вызова тестов.
+![вызов http://cinemaabyss.example.com/api/movies](call_movies.png)
+
+![вызов http://cinemaabyss.example.com/api/events](call_events.png)
 
 
 ## Задание 4
@@ -348,7 +354,9 @@ minikube tunnel
 Потом вызовите 
 https://cinemaabyss.example.com/api/movies
 и приложите скриншот развертывания helm и вывода https://cinemaabyss.example.com/api/movies
+![helm_deploy.png](helm_deploy.png)
 
+![helm_movies.png](helm_movies.png)
 
 # Задание 5
 Компания планирует активно развиваться и для повышения надежности, безопасности, реализации сетевых паттернов типа Circuit Breaker и канареечного деплоя вам как архитектору необходимо развернуть istio и настроить circuit breaker для monolith и movies сервисов.
@@ -414,6 +422,9 @@ You can see 21 for the upstream_rq_pending_overflow value which means 21 calls s
 ```
 
 Приложите скриншот работы circuit breaker'а
+![fortio_pod_name.png](fortio_pod_name.png)
+
+![circuit_breaker_stat.png](circuit_breaker_stat.png)
 
 Удаляем все
 ```bash
